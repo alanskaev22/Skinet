@@ -31,6 +31,7 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IProductRepository, ProductRepository>(); // Scoped will be used for the lifetime of http request
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddDbContext<StoreContext>(options => 
             options.UseSqlite(_configuration.GetConnectionString("Default"))
             );
