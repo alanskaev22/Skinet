@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Interfaces;
+using Core.Specifications;
 
 namespace API.Controllers
 {
@@ -31,14 +32,16 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            var products = await _productsRepository.ListAllAsync();
+            var spec = new ProductsWithTypesAndBrandsSpecification();
+            var products = await _productsRepository.ListAsync(spec);
             return Ok(products);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _productsRepository.GetByIdAsync(id);
+            var spec = new ProductsWithTypesAndBrandsSpecification(id);
+            var product = await _productsRepository.GetEntityWithSpec(spec);
             return product;
         }
 
