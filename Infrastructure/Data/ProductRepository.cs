@@ -26,12 +26,18 @@ namespace Infrastructure.Data
 
         public async Task<Product> GetProductByIdAsync(int id)
         {
-            return await _storeContext.Products.FindAsync(id);
+            return await _storeContext.Products
+                .Include(product => product.ProductBrand)   //We need to tell ef to return these objects as well, otherwise
+                .Include(product => product.ProductType)    //these objects will be null in api response
+                .FirstOrDefaultAsync(product => product.Id == id); //Predicate to match the id
         }
 
         public async Task<IReadOnlyList<Product>> GetProductsAsync()
         {
-            return await _storeContext.Products.ToListAsync();
+            return await _storeContext.Products
+                .Include(product => product.ProductBrand)   //We need to tell ef to return these objects as well, otherwise
+                .Include(product => product.ProductType)    //these objects will be null in api response
+                .ToListAsync();
         }
 
         public async Task<IReadOnlyList<ProductType>> GetProductTypesAsync()
