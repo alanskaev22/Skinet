@@ -35,20 +35,20 @@ namespace API.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductsResponseDto>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetProducts()
         {
             var spec = new ProductsWithTypesAndBrandsSpecification();
             var products = await _productsRepository.ListAsync(spec);
-            return Ok(_mapper.Map<IEnumerable<Product>, IEnumerable<ProductsResponseDto>>(products));  
+            return Ok(_mapper.Map<IEnumerable<Product>, IEnumerable<ProductResponseDto>>(products));  
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductsResponseDto>> GetProduct(int id)
+        public async Task<ActionResult<ProductResponseDto>> GetProduct(int id)
         {
             var spec = new ProductsWithTypesAndBrandsSpecification(id);
             var product = await _productsRepository.GetEntityWithSpec(spec);
 
-            return _mapper.Map<Product, ProductsResponseDto>(product);
+            return _mapper.Map<Product, ProductResponseDto>(product);
         }
 
         [HttpGet("brands")]
