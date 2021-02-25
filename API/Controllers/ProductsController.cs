@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.Interfaces;
 using Core.Specifications;
+using API.DTO;
+using AutoMapper;
 
 namespace API.Controllers
 {
@@ -18,31 +20,35 @@ namespace API.Controllers
         private readonly IGenericRepository<Product> _productsRepository;
         private readonly IGenericRepository<ProductBrand> _productBrandRepository;
         private readonly IGenericRepository<ProductType> _productTypeRepository;
+        private readonly IMapper _mapper;
 
         public ProductsController(IGenericRepository<Product> productsRepository,
                                   IGenericRepository<ProductBrand> productBrandRepository,
-                                  IGenericRepository<ProductType> productTypeRepository)
+                                  IGenericRepository<ProductType> productTypeRepository,
+                                  IMapper mapper)
         {
             _productsRepository = productsRepository;
             _productBrandRepository = productBrandRepository;
             _productTypeRepository = productTypeRepository;
+            _mapper = mapper;
         }
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductsResponseDto>>> GetProducts()
         {
             var spec = new ProductsWithTypesAndBrandsSpecification();
             var products = await _productsRepository.ListAsync(spec);
-            return Ok(products);
+            return Ok(_mapper.Map<IEnumerable<Product>, IEnumerable<ProductsResponseDto>>(products));  
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductsResponseDto>> GetProduct(int id)
         {
             var spec = new ProductsWithTypesAndBrandsSpecification(id);
             var product = await _productsRepository.GetEntityWithSpec(spec);
-            return product;
+
+            return _mapper.Map<Product, ProductsResponseDto>(product);
         }
 
         [HttpGet("brands")]
